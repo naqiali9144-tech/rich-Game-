@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Coin Rush V2</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Arial,sans-serif;
+  background:#0d1024;
+  color:#fff;
+  min-height:100vh
+}
+button,input{font:inherit}
+button{cursor:pointer}
+
+.login{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px
+}
+.login-box{
+  width:100%;
+  max-width:390px;
+  background:#181d3b;
+  padding:30px;
+  border-radius:24px;
+  text-align:center;
+  box-shadow:0 20px 50px #0008
+}
+.logo{font-size:38px;color:#ffd84d;margin-bottom:8px}
+.login-box p{color:#aeb5dc;margin-bottom:20px}
+input{
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:11px;
+  margin:7px 0;
+  outline:none
+}
+.primary{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:11px;
+  background:#5967ff;
+  color:#fff;
+  font-weight:bold;
+  margin-top:10px
+}
+
+.app{display:none;max-width:650px;margin:auto;padding-bottom:80px}
+
+.top{
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+.top h1{color:#ffd84d}
+.logout{
+  background:#272d54;
+  color:#fff;
+  border:0;
+  padding:8px 12px;
+  border-radius:9px
+}
+
+.wallet{
+  margin:0 16px 16px;
+  padding:20px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#5967ff,#7b4dff);
+  text-align:center
+}
+.balance{
+  font-size:42px;
+  font-weight:bold;
+  color:#ffd84d;
+  margin:7px
+}
+
+.nav{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  padding:10px 16px
+}
+.nav button{
+  background:#191e3e;
+  border:0;
+  color:#cbd0ef;
+  padding:10px 4px;
+  border-radius:10px;
+  font-size:12px
+}
+.nav button.active{background:#5967ff;color:#fff}
+
+.page{display:none;padding:5px 16px}
+.page.active{display:block}
+
+.card{
+  background:#181d3b;
+  border-radius:18px;
+  padding:18px;
+  margin:10px 0
+}
+.card h2{margin-bottom:10px}
+.muted{color:#aeb5dc;font-size:14px}
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px
+}
+.game{
+  background:#22284c;
+  border:1px solid #303762;
+  padding:18px;
+  border-radius:16px;
+  text-align:center
+}
+.game .icon{font-size:38px;margin-bottom:8px}
+.game button{
+  border:0;
+  background:#5967ff;
+  color:white;
+  padding:9px 15px;
+  border-radius:9px;
+  margin-top:10px
+}
+
+.choice{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:15px
+}
+.choice button{
+  padding:18px 5px;
+  border:0;
+  border-radius:12px;
+  background:#2a315b;
+  color:white
+}
+.choice button.selected{background:#5967ff}
+
+.big-btn{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  padding:14px;
+  background:#5967ff;
+  color:#fff;
+  margin-top:12px;
+  font-weight:bold
+}
+
+.result{
+  text-align:center;
+  min-height:25px;
+  margin-top:15px;
+  font-weight:bold
+}
+
+.progress{
+  height:10px;
+  background:#303654;
+  border-radius:20px;
+  overflow:hidden;
+  margin:10px 0
+}
+.progress div{
+  height:100%;
+  background:#ffd84d;
+  width:0%
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #303654
+}
+
+.badge{
+  padding:5px 9px;
+  background:#2a315b;
+  border-radius:8px;
+  font-size:12px
+}
+
+.notice{
+  text-align:center;
+  color:#777fae;
+  font-size:11px;
+  padding:20px
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section class="login" id="loginScreen">
+  <div class="login-box">
+    <div class="logo">🪙 Coin Rush</div>
+    <p>Version 2 • Virtual Coins</p>
+
+    <input id="username" placeholder="Enter username">
+    <input id="password" type="password" placeholder="Enter password">
+
+    <button class="primary" onclick="login()">LOGIN / SIGN UP</button>
+
+    <div class="notice">
+      Demo account only. No real-money transactions.
+    </div>
+  </div>
+</section>
+
+
+<!-- APP -->
+<main class="app" id="app">
+
+  <div class="top">
+    <h1>🪙 Coin Rush</h1>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="wallet">
+    <div>Virtual Wallet</div>
+    <div class="balance" id="balance">1000</div>
+    <div>🪙 Virtual Coins</div>
+  </div>
+
+  <nav class="nav">
+    <button class="active" onclick="showPage('home',this)">🏠 Home</button>
+    <button onclick="showPage('missions',this)">🎯 Missions</button>
+    <button onclick="showPage('leaderboard',this)">🏆 Rank</button>
+    <button onclick="showPage('stats',this)">📊 Stats</button>
+  </nav>
+
+
+  <!-- HOME -->
+  <section class="page active" id="home">
+
+    <div class="card">
+      <h2>🎁 Daily Bonus</h2>
+      <p class="muted">Claim your daily virtual coin reward.</p>
+      <button class="big-btn" id="bonusBtn" onclick="dailyBonus()">
+        Claim +100 Coins
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>🎮 Mini Games</h2>
+
+      <div class="games">
+
+        <div class="game">
+          <div class="icon">🎯</div>
+          <b>Guess</b>
+          <p class="muted">Pick 1, 2 or 3</p>
+          <button onclick="openGame('guess')">Play</button>
+        </div>
+
+        <div class="game">
+          <div class="icon">🪙</div>
+          <b>Coin Flip</b>
+          <p class="muted">Heads or tails</p>
+          <button onclick="openGame('flip')">Play</button>
+        </div>
+
+        <div class="game">
+          <div class="icon">🎲</div>
+          <b>Dice</b>
+          <p class="muted">Roll virtual dice</p>
+          <button onclick="openGame('dice')">Play</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔔 Notifications</h2>
+      <div id="notifications">
+        <div class="row">
+          <span>Welcome to Coin Rush V2!</span>
+          <span class="badge">NEW</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- GAME -->
+  <section class="page" id="gamePage">
+
+    <div class="card">
+      <h2 id="gameTitle">Game</h2>
+      <p class="muted" id="gameDescription"></p>
+
+      <input id="playAmount"
+             type="number"
+             value="50"
+             min="10"
+             placeholder="Virtual coins">
+
+      <div id="gameControls"></div>
+
+      <div class="result" id="gameResult"></div>
+    </div>
+
+  </section>
+
+
+  <!-- MISSIONS -->
+  <section class="page" id="missions">
+
+    <div class="card">
+      <h2>🎯 Missions</h2>
+
+      <div class="row">
+        <div>
+          <b>Play 3 Games</b>
+          <p class="muted">
+            <span id="gamesMission">0</span>/3
+          </p>
+        </div>
+        <span>+150 🪙</span>
+      </div>
+
+      <div class="progress">
+        <div id="gamesProgress"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <b>Earn 500 Coins</b>
+          <p class="muted">
+            <span id="earnMission">0</span>/500
+          </p>
+        </div>
+        <span>+200 🪙</span>
+      </div>
+
+      <div class="progress">
+        <div id="earnProgress"></div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- LEADERBOARD -->
+  <section class="page" id="leaderboard">
+
+    <div class="card">
+      <h2>🏆 Leaderboard</h2>
+
+      <div class="row">
+        <span>🥇 Ali</span>
+        <b>2450 🪙</b>
+      </div>
+
+      <div class="row">
+        <span>🥈 Ahmed</span>
+        <b>2180 🪙</b>
+      </div>
+
+      <div class="row">
+        <span>🥉 Hamza</span>
+        <b>1920 🪙</b>
+      </div>
+
+      <div class="row">
+        <span>👤 <span id="playerRank">You</span></span>
+        <b id="leaderBalance">1000 🪙</b>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- STATS -->
+  <section class="page" id="stats">
+
+    <div class="card">
+      <h2>📊 Player Statistics</h2>
+
+      <div class="row">
+        <span>Username</span>
+        <b id="statUser">Guest</b>
+      </div>
+
+      <div class="row">
+        <span>Total Games</span>
+        <b id="statGames">0</b>
+      </div>
+
+      <div class="row">
+        <span>Wins</span>
+        <b id="statWins">0</b>
+      </div>
+
+      <div class="row">
+        <span>Losses</span>
+        <b id="statLosses">0</b>
+      </div>
+
+      <div class="row">
+        <span>Coins Earned</span>
+        <b id="statEarned">0 🪙</b>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <div class="notice">
+    Virtual coins only • No cash value • No deposits or withdrawals
+  </div>
+
+</main>
+
+
+<script>
+
+let user = localStorage.getItem("cr_user");
+
+let data = JSON.parse(
+  localStorage.getItem("cr_data") || "null"
+);
+
+if(!data){
+  data = {
+    balance:1000,
+    games:0,
+    wins:0,
+    losses:0,
+    earned:0,
+    missionGames:0,
+    missionEarn:0,
+    bonusDate:""
+  };
+}
+
+let currentGame = "";
+let selected = null;
+
+
+// LOGIN
+
+function login(){
+
+  const name =
+    document.getElementById("username").value.trim();
+
+  if(!name){
+    alert("Please enter username.");
+    return;
+  }
+
+  user = name;
+
+  localStorage.setItem("cr_user",user);
+
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("app").style.display="block";
+
+  updateUI();
+}
+
+function logout(){
+
+  localStorage.removeItem("cr_user");
+
+  document.getElementById("app").style.display="none";
+  document.getElementById("loginScreen").style.display="flex";
+}
+
+
+// INITIAL LOGIN
+
+if(user){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("app").style.display="block";
+}
+
+
+// SAVE
+
+function save(){
+  localStorage.setItem("cr_data",JSON.stringify(data));
+}
+
+
+// UI
+
+function updateUI(){
+
+  document.getElementById("balance").textContent=data.balance;
+
+  document.getElementById("leaderBalance").textContent =
+    data.balance+" 🪙";
+
+  document.getElementById("playerRank").textContent =
+    user || "You";
+
+  document.getElementById("statUser").textContent =
+    user || "Guest";
+
+  document.getElementById("statGames").textContent =
+    data.games;
+
+  document.getElementById("statWins").textContent =
+    data.wins;
+
+  document.getElementById("statLosses").textContent =
+    data.losses;
+
+  document.getElementById("statEarned").textContent =
+    data.earned+" 🪙";
+
+  document.getElementById("gamesMission").textContent =
+    Math.min(data.missionGames,3);
+
+  document.getElementById("earnMission").textContent =
+    Math.min(data.missionEarn,500);
+
+  document.getElementById("gamesProgress").style.width =
+    Math.min(data.missionGames/3*100,100)+"%";
+
+  document.getElementById("earnProgress").style.width =
+    Math.min(data.missionEarn/500*100,100)+"%";
+
+  const today =
+    new Date().toISOString().slice(0,10);
+
+  if(data.bonusDate === today){
+
+    document.getElementById("bonusBtn").disabled=true;
+    document.getElementById("bonusBtn").textContent=
+      "Bonus Already Claimed ✓";
+
+  }else{
+
+    document.getElementById("bonusBtn").disabled=false;
+    document.getElementById("bonusBtn").textContent=
+      "Claim +100 Coins";
+  }
+
+  save();
+}
+
+
+// NAVIGATION
+
+function showPage(id,button){
+
+  document.querySelectorAll(".page")
+    .forEach(p=>p.classList.remove("active"));
+
+  document.getElementById(id)
+    .classList.add("active");
+
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  if(button) button.classList.add("active");
+}
+
+
+// DAILY BONUS
+
+function dailyBonus(){
+
+  const today =
+    new Date().toISOString().slice(0,10);
+
+  if(data.bonusDate===today){
+    return;
+  }
+
+  data.balance += 100;
+  data.earned += 100;
+  data.missionEarn += 100;
+  data.bonusDate=today;
+
+  addNotification("🎁 Daily bonus: +100 virtual coins!");
+
+  updateUI();
+}
+
+
+// NOTIFICATIONS
+
+function addNotification(text){
+
+  const box =
+    document.getElementById("notifications");
+
+  const row=document.createElement("div");
+
+  row.className="row";
+
+  row.innerHTML=
+    `<span>${text}</span>
+     <span class="badge">NEW</span>`;
+
+  box.prepend(row);
+}
+
+
+// OPEN GAME
+
+function openGame(type){
+
+  currentGame=type;
+  selected=null;
+
+  document.getElementById("home")
+    .classList.remove("active");
+
+  document.getElementById("gamePage")
+    .classList.add("active");
+
+  let title="";
+  let desc="";
+  let controls="";
+
+  if(type==="guess"){
+
+    title="🎯 Guess the Number";
+    desc="Choose a number from 1 to 3.";
+
+    controls=`
+      <div class="choice">
+        <button onclick="selectChoice(1)">1️⃣</button>
+        <button onclick="selectChoice(2)">2️⃣</button>
+        <button onclick="selectChoice(3)">3️⃣</button>
+      </div>
+      <button class="big-btn" onclick="playGuess()">
+        PLAY
+      </button>
+    `;
+
+  }
+
+  if(type==="flip"){
+
+    title="🪙 Coin Flip";
+    desc="Choose Heads or Tails.";
+
+    controls=`
+      <div class="choice">
+        <button onclick="selectChoice('Heads')">
+          Heads
+        </button>
+        <button onclick="selectChoice('Tails')">
+          Tails
+        </button>
+      </div>
+      <button class="big-btn" onclick="playFlip()">
+        FLIP COIN
+      </button>
+    `;
+
+  }
+
+  if(type==="dice"){
+
+    title="🎲 Dice Roll";
+    desc="Roll a virtual dice. Higher number wins.";
+
+    controls=`
+      <button class="big-btn" onclick="playDice()">
+        ROLL DICE
+      </button>
+    `;
+  }
+
+  document.getElementById("gameTitle").textContent=title;
+  document.getElementById("gameDescription").textContent=desc;
+  document.getElementById("gameControls").innerHTML=controls;
+  document.getElementById("gameResult").textContent="";
+}
+
+
+// SELECT
+
+function selectChoice(value){
+
+  selected=value;
+
+  document.querySelectorAll(".choice button")
+    .forEach(b=>b.classList.remove("selected"));
+
+  event.target.classList.add("selected");
+}
+
+
+// VALIDATE BET
+
+function getBet(){
+
+  const amount =
+    Number(document.getElementById("playAmount").value);
+
+  if(!Number.isFinite(amount) || amount<10){
+
+    document.getElementById("gameResult").textContent=
+      "Minimum is 10 virtual coins.";
+
+    return null;
+  }
+
+  if(amount>data.balance){
+
+    document.getElementById("gameResult").textContent=
+      "Not enough virtual coins.";
+
+    return null;
+  }
+
+  return amount;
+}
+
+
+// GAME FINISH
+
+function finishGame(win,bet,message){
+
+  data.games++;
+  data.missionGames++;
+
+  if(win){
+
+    data.balance += bet;
+    data.wins++;
+    data.earned += bet;
+    data.missionEarn += bet;
+
+  }else{
+
+    data.balance -= bet;
+    data.losses++;
+  }
+
+  document.getElementById("gameResult").textContent=
+    message;
+
+  if(data.missionGames>=3){
+
+    addNotification(
+      "🎯 Mission progress: 3 games completed!"
+    );
+  }
+
+  updateUI();
+}
+
+
+// GUESS
+
+function playGuess(){
+
+  const bet=getBet();
+
+  if(bet===null) return;
+
+  if(selected===null){
+
+    document.getElementById("gameResult").textContent=
+      "Select a number first.";
+
+    return;
+  }
+
+  const winNumber =
+    Math.floor(Math.random()*3)+1;
+
+  if(selected===winNumber){
+
+    finishGame(
+      true,
+      bet,
+      "🎉 WIN! Number was "+winNumber+
+      ". +"+bet+" virtual coins"
+    );
+
+  }else{
+
+    finishGame(
+      false,
+      bet,
+      "😅 LOSS! Number was "+winNumber+
+      ". -"+bet+" virtual coins"
+    );
+  }
+}
+
+
+// COIN FLIP
+
+function playFlip(){
+
+  const bet=getBet();
+
+  if(bet===null) return;
+
+  if(selected===null){
+
+    document.getElementById("gameResult").textContent=
+      "Select Heads or Tails.";
+
+    return;
+  }
+
+  const result =
+    Math.random()<0.5 ? "Heads":"Tails";
+
+  if(selected===result){
+
+    finishGame(
+      true,
+      bet,
+      "🎉 "+result+"! You won +"+bet+" coins."
+    );
+
+  }else{
+
+    finishGame(
+      false,
+      bet,
+      "😅 "+result+"! You lost -"+bet+" coins."
+    );
+  }
+}
+
+
+// DICE
+
+function playDice(){
+
+  const bet=getBet();
+
+  if(bet===null) return;
+
+  const roll =
+    Math.floor(Math.random()*6)+1;
+
+  // Demo rule:
+  // 4,5,6 = win
+  // 1,2,3 = loss
+
+  if(roll>=4){
+
+    finishGame(
+      true,
+      bet,
+      "🎲 You rolled "+roll+
+      "! +"+bet+" virtual coins"
+    );
+
+  }else{
+
+    finishGame(
+      false,
+      bet,
+      "🎲 You rolled "+roll+
+      "! -"+bet+" virtual coins"
+    );
+  }
+}
+
+
+// START
+
+updateUI();
+
+</script>
+
+</body>
+</html>
